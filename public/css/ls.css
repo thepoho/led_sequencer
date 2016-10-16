@@ -1,0 +1,14 @@
+.canvas{
+  margin: 20px;
+  background-color: lightblue;
+  width: 500px;
+  height: 500px;
+}
+
+.canvas .led{
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 20px;
+  position: absolute;
+}
