@@ -19,16 +19,27 @@ ls = {
     var yPos = event.clientY - offset.top  - 10;
 
     var led = new LED(xPos, yPos, ls.leds.length);
-    var tmp = led.getJqueryObject();
     ls.leds.push(led);
 
-    $(".canvas").append(tmp);
+    ls.drawLed(led);
   },
+
   redraw: function(led){
-    $('.canvas .led').remove();
-    $.each(ls.leds, function(idx, led){
-      $(".canvas").append(led.getJqueryObject());
-    })
+    if(led == undefined){
+      $('.canvas .led').remove();
+      $.each(ls.leds, function(idx, led){
+        ls.drawLed(led);
+      })
+    }else{
+      $('.canvas .led[data-idx='+led.idx+']').remove();      
+    }
+  },
+  drawLed: function(led){
+    var tmp = led.getJqueryObject();
+    tmp.click(function(){
+      ls.selectLed($(this));
+    });
+    $(".canvas").append(tmp);
   }
 }
 
@@ -39,8 +50,10 @@ function LED(x,y,idx){
 
   this.getJqueryObject = function(){
     var tmp = $("<div class='led'></div>");
+    tmp.attr('data-idx', this.idx)
     tmp.css("margin-left", this.x+'px');
     tmp.css("margin-top", this.y+'px');
+
     return(tmp);
   }
 }
