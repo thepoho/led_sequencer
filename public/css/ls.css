@@ -12,3 +12,7 @@
   border-radius: 20px;
   position: absolute;
 }
+
+.details input{
+  width: 100%;
+}
