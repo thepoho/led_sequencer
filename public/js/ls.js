@@ -1,7 +1,9 @@
 ls = {
   mode: 'place',
   leds: [],
-	startup: function(){
+  currentLed: null,
+
+  startup: function(){
     $("label.place_edit").click(function(){
       ls.mode = $(this).find('input').val();
     });
@@ -11,12 +13,25 @@ ls = {
         ls.placeLed(event);
       }
     });
+    $("input.details_x").change(function(){
+      if(ls.currentLed && ls.mode == 'edit'){
+        ls.currentLed.x = $(this).val();
+        ls.redraw(ls.currentLed);
+      }
+    });
+    $("input.details_y").change(function(){
+      if(ls.currentLed && ls.mode == 'edit'){
+        ls.currentLed.y = $(this).val();
+        ls.redraw(ls.currentLed);
+      }
+    });
   },
+
   placeLed: function(event){
     var offset = $('.canvas').offset();
     // the -10 is because my LED is 20x20 px
-    var xPos = event.clientX - offset.left - 10;
-    var yPos = event.clientY - offset.top  - 10;
+    var xPos = parseInt(event.clientX - offset.left - 10);
+    var yPos = parseInt(event.clientY - offset.top  - 10);
 
     var led = new LED(xPos, yPos, ls.leds.length);
     ls.leds.push(led);
@@ -31,15 +46,34 @@ ls = {
         ls.drawLed(led);
       })
     }else{
-      $('.canvas .led[data-idx='+led.idx+']').remove();      
+      $('.canvas .led[data-idx='+led.idx+']').remove();
+      ls.drawLed(led);
     }
   },
+
   drawLed: function(led){
     var tmp = led.getJqueryObject();
     tmp.click(function(){
-      ls.selectLed($(this));
+      ledObj = ls.leds[parseInt($(this).attr('data-idx'))];
+      ls.selectLed(ledObj);
     });
+    if(led == ls.currentLed){
+      tmp.addClass('selected');
+    }
     $(".canvas").append(tmp);
+  },
+
+  selectLed: function(led){
+    if(ls.mode != 'edit'){
+      return;
+    }
+    ls.currentLed = led;
+    $(".canvas .led").removeClass("selected");
+    $('.canvas .led[data-idx='+led.idx+']').addClass("selected");
+
+    $("input.details_x").val(led.x);
+    $("input.details_y").val(led.y);
+
   }
 }
 
