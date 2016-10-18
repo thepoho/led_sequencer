@@ -25,6 +25,17 @@ ls = {
         ls.redraw(ls.currentLed);
       }
     });
+    $("input.name").change(function(){
+      if(ls.currentLed && ls.mode == 'edit'){
+        ls.currentLed.name = $(this).val();
+      }
+    });
+    $("input.colour").spectrum({
+      change: ls.colourChanged,
+      move: ls.colourChanged,
+      showPalette: true,
+    });
+
   },
 
   placeLed: function(event){
@@ -73,21 +84,39 @@ ls = {
 
     $("input.details_x").val(led.x);
     $("input.details_y").val(led.y);
-
+    $("input.name").val(led.name);
+  },
+  colourChanged: function(colour){
+    if(ls.currentLed && ls.mode == 'edit'){
+      var hs = colour.toHexString();
+      ls.currentLed.colour = hs;
+      ls.redraw(ls.currentLed);
+    }
   }
 }
 
 function LED(x,y,idx){
-  this.x = x;
-  this.y = y;
-  this.idx = idx;
+  this.x      = x;
+  this.y      = y;
+  this.idx    = idx;
+  this.name   = idx;
+  this.colour = "#000000";
 
   this.getJqueryObject = function(){
     var tmp = $("<div class='led'></div>");
     tmp.attr('data-idx', this.idx)
     tmp.css("margin-left", this.x+'px');
     tmp.css("margin-top", this.y+'px');
+    tmp.css("background-color", this.colour);
 
     return(tmp);
   }
+}
+
+function Animation(name){
+  this.name = name;
+  this.frames = [];
+}
+function Frame(){
+  this.leds = [];
 }
