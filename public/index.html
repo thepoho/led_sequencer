@@ -19,9 +19,9 @@
   <script src="/js/ls.js"></script>
 
   <script type="text/javascript">
-  jQuery(function($){
-    ls.startup();
-  })
+    jQuery(function($){
+      ls.startup();
+    })
   </script>
 
 </head>
@@ -48,6 +48,9 @@
               <label class="btn btn-primary place_edit">
                 <input type="radio" name="options" value='edit' autocomplete="off"> Edit
               </label>
+<!--               <label class="btn btn-primary place_edit">
+                <input type="radio" name="options" value='animate' autocomplete="off"> Animate
+              </label> -->
             </div>
             <h4>Details</h4>
           </div>
@@ -83,6 +86,26 @@
       </div>
 
       <div class="col-lg-8">
+        <div class="animate">
+          <button class='previous btn btn-info' type='button'>
+            <i class='fa fa-step-backward'></i>
+          </button>
+          <input class='current_frame' value='1'/>
+          of
+          <input class='total_frames' value='1' disabled='disabled'/>
+          <button class='add_frame btn'>
+            <i class='fa fa-plus'></i>
+          </button>
+
+          <button class='play_pause btn'>
+            <i class='fa fa-play'></i>
+          </button>
+
+          <button class='next btn btn-info'>
+            <i class='fa fa-step-forward'></i>
+          </button>
+        </div>
+
         <div class="canvas">
         </div>
       </div>

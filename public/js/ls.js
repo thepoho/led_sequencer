@@ -2,6 +2,8 @@ ls = {
   mode: 'place',
   leds: [],
   currentLed: null,
+  currentFrame: 0,
+  lastFrame:  0,
 
   startup: function(){
     $("label.place_edit").click(function(){
@@ -35,6 +37,15 @@ ls = {
       move: ls.colourChanged,
       showPalette: true,
     });
+    $("button.add_frame").click(function(){
+      ls.addFrame();
+    });
+
+    $("button.next_frame").click(function(){
+
+    })
+    $("button.previous_frame").click(function(){
+    });
 
   },
 
@@ -55,7 +66,7 @@ ls = {
       $('.canvas .led').remove();
       $.each(ls.leds, function(idx, led){
         ls.drawLed(led);
-      })
+      });
     }else{
       $('.canvas .led[data-idx='+led.idx+']').remove();
       ls.drawLed(led);
@@ -63,7 +74,7 @@ ls = {
   },
 
   drawLed: function(led){
-    var tmp = led.getJqueryObject();
+    var tmp = led.getJqueryObject(ls.currentFrame);
     tmp.click(function(){
       ledObj = ls.leds[parseInt($(this).attr('data-idx'))];
       ls.selectLed(ledObj);
@@ -89,28 +100,45 @@ ls = {
   colourChanged: function(colour){
     if(ls.currentLed && ls.mode == 'edit'){
       var hs = colour.toHexString();
-      ls.currentLed.colour = hs;
+      ls.currentLed.setFrameColour(ls.currentFrame, hs);
       ls.redraw(ls.currentLed);
+    }
+  },
+  addFrame: function(){
+    if(ls.mode == 'edit'){
+      ls.lastFrame += 1;
+      $.each(ls.leds, function(idx, led){
+        ls.addFrame(led);
+      })
+      $("input.total_frames").val(ls.lastFrame+1);
     }
   }
 }
 
 function LED(x,y,idx){
-  this.x      = x;
-  this.y      = y;
-  this.idx    = idx;
-  this.name   = idx;
-  this.colour = "#000000";
+  this.x       = x;
+  this.y       = y;
+  this.idx     = idx;
+  this.name    = idx;
+  this.colours = ["#000000"];
 
-  this.getJqueryObject = function(){
+  this.setFrameColour = function(frame, colour){
+    this.colours[frame] = colour;
+  };
+  this.addFrame = function(){
+    var lastColour = this.colours[this.colours.length];
+    this.colours.push(lastColour);
+  };
+
+  this.getJqueryObject = function(frame){
     var tmp = $("<div class='led'></div>");
     tmp.attr('data-idx', this.idx)
     tmp.css("margin-left", this.x+'px');
     tmp.css("margin-top", this.y+'px');
-    tmp.css("background-color", this.colour);
+    tmp.css("background-color", this.colours[frame]);
 
     return(tmp);
-  }
+  };
 }
 
 function Animation(name){

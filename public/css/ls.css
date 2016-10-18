@@ -20,3 +20,10 @@
 .details input{
   width: 100%;
 }
+
+.animate input{
+  width: 50px;
+}
+.animate button.btn{
+  width:50px;
+}
