@@ -15,11 +15,11 @@ You can then open a browser and go to
 http://localhost:4567/index.html
 
 TODO:
-Add frames
-Multiple sequences
-Alpha Channel
-Time per frame
-Implement hot keys
-Background image
-Import/export
-Drag LED's
+* Add frames
+* Multiple sequences
+* Alpha Channel
+* Time per frame
+* Implement hot keys
+* Background image
+* Import/export
+* Drag LED's
