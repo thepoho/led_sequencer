@@ -49,9 +49,10 @@ ls = {
     });
 
     $("button.next_frame").click(function(){
-
+      ls.nextFrame();
     })
     $("button.previous_frame").click(function(){
+      ls.previousFrame();
     });
 
   },
@@ -115,11 +116,26 @@ ls = {
   },
   addFrame: function(){
     if(ls.mode == 'edit'){
-      ls.lastFrame += 1;
-      $.each(ls.leds, function(idx, led){
-        ls.addFrame(led);
-      })
-      $("input.total_frames").val(ls.lastFrame+1);
+      ls.currentSequence.addFrame();
+      $("input.total_frames").val(ls.currentSequence.frames.length);
+    }
+  },
+  nextFrame: function(){
+    if(ls.mode == 'edit'){
+      if(ls.currentFrame < ls.currentSequence.frames.length-1){
+        ls.currentFrame += 1;
+        $("input.current_frame").val(ls.currentFrame+1);
+        ls.redraw();
+      }
+    }
+  },
+  previousFrame: function(){
+    if(ls.mode == 'edit'){
+      if(ls.currentFrame > 0){
+        ls.currentFrame -= 1;
+        $("input.current_frame").val(ls.currentFrame+1);
+        ls.redraw();
+      }
     }
   },
   setCurrentLedColour: function(led, colour){
