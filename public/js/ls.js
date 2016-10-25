@@ -5,11 +5,25 @@ ls = {
   currentLed: null,
   currentFrame: 0,
   currentSequence: null,
+  shiftDown: false,
 
   startup: function(){
     var seq = new Sequence('default');
     ls.sequences.push(seq);
     ls.currentSequence = seq;
+
+    document.addEventListener("keyup", function (e) {
+      if(e.keyCode == 16) {ls.shiftDown = false;}
+    });
+    document.addEventListener("keydown", function (e) {
+      if(e.keyCode == 16) {ls.shiftDown = true;}
+      if(ls.mode == "edit" && ls.currentLed){
+        if(e.keyCode == 37) {ls.leftPressed();}
+        if(e.keyCode == 38) {ls.upPressed();}
+        if(e.keyCode == 39) {ls.rightPressed();}
+        if(e.keyCode == 40) {ls.downPressed();}
+      }
+    });
 
     $("label.place_edit").click(function(){
       ls.mode = $(this).find('input').val();
@@ -55,6 +69,43 @@ ls = {
       ls.previousFrame();
     });
 
+  },
+
+  leftPressed: function(){
+    if(ls.shiftDown){
+      ls.currentLed.x -= 10;
+    }else{
+      ls.currentLed.x -= 1;
+    }
+    ls.redraw(ls.currentLed);
+    ls.selectLed(ls.currentLed);
+  },
+  rightPressed: function(){
+    if(ls.shiftDown){
+      ls.currentLed.x += 10;
+    }else{
+      ls.currentLed.x += 1;
+    }
+    ls.redraw(ls.currentLed);
+    ls.selectLed(ls.currentLed);
+  },
+  upPressed: function(){
+    if(ls.shiftDown){
+      ls.currentLed.y -= 10;
+    }else{
+      ls.currentLed.y -= 1;
+    }
+    ls.redraw(ls.currentLed);
+    ls.selectLed(ls.currentLed);
+  },
+  downPressed: function(){
+    if(ls.shiftDown){
+      ls.currentLed.y += 10;
+    }else{
+      ls.currentLed.y += 1;
+    }
+    ls.redraw(ls.currentLed);
+    ls.selectLed(ls.currentLed);
   },
 
   placeLed: function(event){
