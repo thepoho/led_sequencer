@@ -5,7 +5,6 @@ ls = {
   currentLed: null,
   currentFrame: 0,
   currentSequence: null,
-  shiftDown: false,
 
   startup: function(){
     var seq = new Sequence('default');
@@ -13,16 +12,10 @@ ls = {
     ls.currentSequence = seq;
 
     document.addEventListener("keyup", function (e) {
-      if(e.keyCode == 16) {ls.shiftDown = false;}
+      ls.keyManager.keyup(e.keyCode)
     });
     document.addEventListener("keydown", function (e) {
-      if(e.keyCode == 16) {ls.shiftDown = true;}
-      if(ls.mode == "edit" && ls.currentLed){
-        if(e.keyCode == 37) {ls.leftPressed();}
-        if(e.keyCode == 38) {ls.upPressed();}
-        if(e.keyCode == 39) {ls.rightPressed();}
-        if(e.keyCode == 40) {ls.downPressed();}
-      }
+      ls.keyManager.keydown(e.keyCode);
     });
 
     $("label.place_edit").click(function(){
@@ -68,44 +61,6 @@ ls = {
     $("button.previous_frame").click(function(){
       ls.previousFrame();
     });
-
-  },
-
-  leftPressed: function(){
-    if(ls.shiftDown){
-      ls.currentLed.x -= 10;
-    }else{
-      ls.currentLed.x -= 1;
-    }
-    ls.redraw(ls.currentLed);
-    ls.selectLed(ls.currentLed);
-  },
-  rightPressed: function(){
-    if(ls.shiftDown){
-      ls.currentLed.x += 10;
-    }else{
-      ls.currentLed.x += 1;
-    }
-    ls.redraw(ls.currentLed);
-    ls.selectLed(ls.currentLed);
-  },
-  upPressed: function(){
-    if(ls.shiftDown){
-      ls.currentLed.y -= 10;
-    }else{
-      ls.currentLed.y -= 1;
-    }
-    ls.redraw(ls.currentLed);
-    ls.selectLed(ls.currentLed);
-  },
-  downPressed: function(){
-    if(ls.shiftDown){
-      ls.currentLed.y += 10;
-    }else{
-      ls.currentLed.y += 1;
-    }
-    ls.redraw(ls.currentLed);
-    ls.selectLed(ls.currentLed);
   },
 
   placeLed: function(event){
@@ -134,7 +89,7 @@ ls = {
   },
 
   drawLed: function(led){
-    var tmp = led.getJqueryObject(ls.currentFrame);
+    var tmp = led.getJqueryObject();
     tmp.css("background-color", ls.getCurrentLedColour(led));
     tmp.click(function(){
       ledObj = ls.leds[parseInt($(this).attr('data-idx'))];
@@ -204,13 +159,22 @@ function LED(x,y,idx){
   this.idx     = idx;
   this.name    = idx;
 
-  this.getJqueryObject = function(frame){
+  this.getJqueryObject = function(){
     var tmp = $("<div class='led'></div>");
     tmp.attr('data-idx', this.idx)
     tmp.css("margin-left", this.x+'px');
     tmp.css("margin-top", this.y+'px');
 
     return(tmp);
+  };
+  this.serialize = function(){
+    var ret = {
+      idx:  this.idx,
+      x:    this.x,
+      y:    this.y,
+      name: this.name
+    };
+    return(ret);
   };
 }
 
@@ -233,6 +197,9 @@ function Sequence(name){
   this.getFrameLedColour = function(frame, led){
     return(this.frames[frame].getLedColour(led));
   };
+  this.serialize = function(){
+    //TODO
+  };
   this.addFrame();
 }
 
@@ -248,5 +215,8 @@ function Frame(){
       ret = '#000000'
     }
     return(ret);
+  };
+  this.serialize = function(){
+    //TODO
   };
 }
